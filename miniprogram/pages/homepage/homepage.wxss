@@ -7,3 +7,15 @@
     left: 0;
     right: 0;
 }
+.contentView {
+    width: 100%
+}
+
+.mapView {
+    box-sizing: border-box;
+    padding: 30rpx, 30rpx, 0, 30rpx;
+}
+
+button {
+    margin: 20rpx;
+}
