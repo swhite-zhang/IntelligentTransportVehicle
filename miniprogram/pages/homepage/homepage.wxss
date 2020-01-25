@@ -8,14 +8,18 @@
     right: 0;
 }
 .contentView {
-    width: 100%
-}
-
-.mapView {
-    box-sizing: border-box;
-    padding: 30rpx, 30rpx, 0, 30rpx;
+    width: 100%;
+    padding: 0;
+    bottom: 0;
+    height: 400px;
 }
 
 button {
     margin: 20rpx;
+    height: 10%;
+}
+
+map{
+    bottom: 0;
+    height: 90%;
 }
