@@ -40,6 +40,11 @@ Page({
     longitude: "",
     scale: 16,
     location: "获取位置",
+    person_num: 0,
+    person_name: "",
+    openid: "",
+    user_info:{},
+    user_background:"",
     markers: [
       {
         id: 1,
@@ -65,14 +70,58 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function(options) {},
+  onLoad: function(options) {
+    var that=this;
+    that.setData({
+      options: options.openid
+    });
+
+wx.cloud.downloadFile({
+  fileID:
+    "cloud://chuyan-1-co5tb.6368-chuyan-1-co5tb-1301134763/homepage_user_background.jpg", // 文件 ID
+  success: res => {
+    // 返回临时文件路径
+    console.log(res.tempFilePath);
+    that.setData({
+      user_background: res.tempFilePath
+    })
+  },
+  fail: console.error
+});
+
+    wx.getSetting({
+      success: res => {
+          wx.getUserInfo({
+            success: res => {
+              that.setData({
+                user_info: res.userInfo
+              });
+            }
+          });
+        }
+    });
+
+    const db = wx.cloud.database();
+    db.collection("user_info")
+      .where({
+        _openid: that.data.openid
+      })
+      .get({
+        success: res => {
+          that.setData({
+            person_name: res.data[0].name,
+            person_num: res.data[0].number,
+            openid:res.data[0]._openid
+          });
+        }
+      });
+  },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function(e) {
     this.mapCtx = wx.createMapContext("myMap");
-    
   },
 
   /**
@@ -131,11 +180,11 @@ Page({
     wx.getLocation({
       success: res => {
         this.setData({
-          latitude:res.latitude,
-          longitude:res.longitude
-        })
+          latitude: res.latitude,
+          longitude: res.longitude
+        });
       }
-    })
+    });
   },
 
   getCenterLocation: function() {

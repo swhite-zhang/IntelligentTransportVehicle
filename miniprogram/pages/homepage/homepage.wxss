@@ -7,6 +7,7 @@
     left: 0;
     right: 0;
 }
+
 .contentView {
     width: 100%;
     padding: 0;
@@ -19,7 +20,29 @@ button {
     height: 10%;
 }
 
-map{
+map {
     bottom: 0;
     height: 90%;
+}
+
+.person {
+    border-bottom-style: inset;
+    padding: 30px;
+    height: 130px;
+    width: 100%;
+    background-size: 100% 100%;
+    text-align: center;
+    font-family: STSong;
+    color: rgba(230, 230, 250)
+}
+
+.userinfo-avatar {
+    width: 110rpx;
+    height: 110rpx;
+    border-radius: 30%;
+}
+
+.readRecord {
+    height: 100%;
+    line-height: 40px;
 }

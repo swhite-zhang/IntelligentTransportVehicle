@@ -1,24 +1,25 @@
 <!-- miniprogram/pages/homepage/homepage.wxml -->
 <block wx:if="{{home}}">
     <view class="container">
-        <view class="page">
-            <view class="page__bd">
-                <view class="weui-tabbar">
-                    <view class="weui-tabbar__item" bindtap="home2map">
-                        <view style="position: relative;display:inline-block;">
-                            <image src="../images/map.jpg" class="weui-tabbar__icon"></image>
-                        </view>
-                        <view class="weui-tabbar__label">地图</view>
-                    </view>
-                    <view class="weui-tabbar__item weui-bar__item_on">
-                        <view style="position: relative;display:inline-block;">
-                            <image src="../images/home.jpg" class="weui-tabbar__icon"></image>
-                            <view class="weui-badge weui-badge_dot" style="position:absolute;top:-2px;left:calc(100% - 3px);"></view>
-                        </view>
-                        <view class="weui-tabbar__label">主页</view>
-                    </view>
-                </view>
+        <view class="person" style="background-image: url({{user_background}})">
+            <image class="userinfo-avatar" src="{{user_info.avatarUrl}}" />
+            <view style="font-size:20px;padding-top:16px;font-color:white">{{person_name}}</view>
+            <view style="font-size:16px;font-color:white">{{person_num}}</view>
+        </view>
+    </view>
+    <view class="weui-tabbar">
+        <view class="weui-tabbar__item" bindtap="home2map">
+            <view style="position: relative;display:inline-block;">
+                <image src="../images/map.jpg" class="weui-tabbar__icon"></image>
             </view>
+            <view class="weui-tabbar__label">地图</view>
+        </view>
+        <view class="weui-tabbar__item weui-bar__item_on">
+            <view style="position: relative;display:inline-block;">
+                <image src="../images/home.jpg" class="weui-tabbar__icon"></image>
+                <view class="weui-badge weui-badge_dot" style="position:absolute;top:-2px;left:calc(100% - 3px);"></view>
+            </view>
+            <view class="weui-tabbar__label">主页</view>
         </view>
     </view>
 </block>
@@ -50,29 +51,27 @@
         bindtap   EventHandle     点击地图时触发   
         bindupdated   EventHandle     在地图渲染更新完成时触发 
         bindpoitap  EventHandle     点击地图poi点时触发      style="width: 100%; height: 300px;" -->
-        <view class="page">
-            <view class="contentView">
-                <map id="myMap" latitude="{{latitude}}" longitude="{{longitude}}" scale="{{scale}}" markers="{{markers}}" covers="{{covers}}" show-location></map>
-                <button bindtap="back_self" type="primary">回位</button>
-                <!-- <button bindtap="translateMarker" type="primary">移动标注</button>
+        <view class="contentView">
+            <map id="myMap" latitude="{{latitude}}" longitude="{{longitude}}" scale="{{scale}}" markers="{{markers}}" covers="{{covers}}" show-location></map>
+            <button bindtap="back_self" type="primary">回位</button>
+            <!-- <button bindtap="translateMarker" type="primary">移动标注</button>
                     <button bindtap="moveToLocation" type="primary">移动位置</button>
                     <button bindtap="scaleClick" type="primary">缩放地图</button>
                     <button bindtap="includePoints" type="primary">缩放视野展示所有经纬度</button> -->
+        </view>
+        <view class="weui-tabbar">
+            <view class="weui-tabbar__item  weui-bar__item_on">
+                <view style="position: relative;display:inline-block;">
+                    <image src="../images/map.jpg" class="weui-tabbar__icon"></image>
+                </view>
+                <view class="weui-tabbar__label">地图</view>
             </view>
-            <view class="weui-tabbar">
-                <view class="weui-tabbar__item  weui-bar__item_on">
-                    <view style="position: relative;display:inline-block;">
-                        <image src="../images/map.jpg" class="weui-tabbar__icon"></image>
-                    </view>
-                    <view class="weui-tabbar__label">地图</view>
+            <view class="weui-tabbar__item" bindtap="map2home">
+                <view style="position: relative;display:inline-block;">
+                    <image src="../images/home.jpg" class="weui-tabbar__icon"></image>
+                    <view class="weui-badge weui-badge_dot" style="position:absolute;top:-2px;left:calc(100% - 3px);"></view>
                 </view>
-                <view class="weui-tabbar__item" bindtap="map2home">
-                    <view style="position: relative;display:inline-block;">
-                        <image src="../images/home.jpg" class="weui-tabbar__icon"></image>
-                        <view class="weui-badge weui-badge_dot" style="position:absolute;top:-2px;left:calc(100% - 3px);"></view>
-                    </view>
-                    <view class="weui-tabbar__label">主页</view>
-                </view>
+                <view class="weui-tabbar__label">主页</view>
             </view>
         </view>
     </view>

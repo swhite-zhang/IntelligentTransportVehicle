@@ -14,32 +14,15 @@ Page({
     loading: false,
     openid: "",
     person_name: "",
-    person_num: 0
+    person_num: 0,
   },
 
-  onReady: function(){
-    this.get_openid();
-    const db = wx.cloud.database();
-    var iflog = false;
-
-    db.collection("user_info")
-      .where({
-        _openid: this.data.openid
-      })
-      .get({
-        success: function(res) {
-          console.log(res);
-          iflog = true;
-        }
-      });
-      if (iflog) {
-        this.setData(
-          {logged:iflog},
-        )
-      }
-  },
+  onReady: function() {},
 
   onLoad: function() {
+
+    var that = this;
+
     if (!wx.cloud) {
       wx.redirectTo({
         url: "../chooseLib/chooseLib"
@@ -55,25 +38,6 @@ Page({
 
     const db = wx.cloud.database();
 
-
-    var iflog=false;
-
-    db.collection("user_info")
-      .where({
-        _openid: this.data.openid
-      })
-      .get({
-        success: function(res) {
-          console.log(res);
-          iflog=true;
-        }
-      });
-
-      if(this.data.logged)
-      {
-        console.log("what is wrong?");
-        this.next();
-      }
     // 获取用户信息
     wx.getSetting({
       success: res => {
@@ -90,6 +54,28 @@ Page({
         }
       }
     });
+
+    db.collection("user_info")
+      .where({
+        _openid: this.data.openid
+      })
+      .get({
+        success: function(res) {
+          that.setData({
+            person_name: res.data[0].name,
+            person_num:res.data[0].number,
+            loged:res.data[0].iflogin,
+          });
+          if (res.data[0].iflogin) {
+            
+            wx.navigateTo({
+              url: "../homepage/homepage?openid=" + that.data.openid
+            });
+          }
+            console.log(res.data[0].iflogin);
+        }
+      });
+
     // if (app.globalData.userInfo) {
     //   this.setData({
     //     userInfo: app.globalData.userInfo,
@@ -177,11 +163,7 @@ Page({
     });
     this.setData({ loading: true });
     wx.navigateTo({
-      url: "../homepage/homepage"
-      // ?name=+
-      // this.data.personName +
-      // "&num=" +
-      // this.data.personNum
+      url: "../homepage/homepage?openid" + this.data.openid
     });
     this.onLoad();
   },
