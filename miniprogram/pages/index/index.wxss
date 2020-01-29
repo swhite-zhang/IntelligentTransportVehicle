@@ -1,5 +1,88 @@
 /**index.wxss**/
 
+@import "../../app.wxss";
+
+.map_container {
+  position: absolute;
+  /* top: 0;
+  bottom: 80px;
+  left: 0;
+  right: 0; */
+}
+
+/* .map {
+  width: 100%;
+  height: 100%;
+} */
+
+.map_text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0px;
+  height: 80px;
+  background: #fff;
+  padding: 0 15px;
+}
+
+text {
+  margin: 5px 0;
+  display: block;
+  font-size: 12px;
+}
+
+.h1 {
+  margin: 15px 0;
+  font-size: 15px;
+}
+
+.weui-tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.contentView {
+  width: 100%;
+  padding: 0;
+  bottom: 0;
+  height: 400px;
+}
+
+button {
+  margin: 20rpx;
+  height: 10%;
+}
+
+map {
+  bottom: 0;
+  height: 90%;
+}
+
+.person {
+  border-bottom-style: inset;
+  padding: 30px;
+  height: 130px;
+  width: 100%;
+  background-size: 100% 100%;
+  text-align: center;
+  font-family: STSong;
+  color: rgba(230, 230, 250)
+}
+
+.userinfo-avatar {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 30%;
+}
+
+.readRecord {
+  height: 100%;
+  line-height: 40px;
+}
+
+
 page {
   background: #f6f6f6;
   display: flex;

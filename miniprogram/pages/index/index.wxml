@@ -1,8 +1,8 @@
-<!--index.wxml-->
-<view class="container">
-
-  <!-- 用户 openid -->
-  <!-- <view class="userinfo">
+<!-- index.wxml -->
+<block wx:if="{{!logged}}">
+  <view class="container">
+    <!-- 用户 openid -->
+    <!-- <view class="userinfo">
     <button 
       open-type="getUserInfo" 
       bindgetuserinfo="onGetUserInfo"
@@ -14,10 +14,8 @@
       <button class="userinfo-nickname" bindtap="onGetOpenid">点击获取 openid</button>
     </view>
   </view> -->
-
-
-  <!-- 上传图片 -->
-  <!-- <view class="uploader">
+    <!-- 上传图片 -->
+    <!-- <view class="uploader">
     <view class="uploader-text" bindtap="doUpload">
       <text>上传图片</text>
     </view>
@@ -25,55 +23,175 @@
       <image class="uploader-image" src="{{imgUrl}}" mode="aspectFit" bindtap="previewImg"></image>
     </view>
   </view> -->
-
-
-  <!-- 操作数据库 -->
-  <!-- <view class="uploader">
+    <!-- 操作数据库 -->
+    <!-- <view class="uploader">
     <navigator url="../databaseGuide/databaseGuide" open-type="navigate" class="uploader-text">
       <text>前端操作数据库</text>
     </navigator>
   </view> -->
-
-  <!-- 即时通信 -->
-  <!-- <view class="uploader">
+    <!-- 即时通信 -->
+    <!-- <view class="uploader">
     <navigator url="../im/im" open-type="navigate" class="uploader-text">
       <text>即时通信 Demo</text>
     </navigator>
   </view> -->
-
-  <!-- 新建云函数 -->
-  <!-- <view class="uploader">
+    <!-- 新建云函数 -->
+    <!-- <view class="uploader">
     <navigator url="../addFunction/addFunction" open-type="navigate" class="uploader-text">
       <text>快速新建云函数</text>
     </navigator>
   </view> -->
-
-  <!-- 云调用 -->
-  <!-- <view class="uploader">
+    <!-- 云调用 -->
+    <!-- <view class="uploader">
     <navigator url="../openapi/openapi" open-type="navigate" class="uploader-text">
       <text>云调用</text>
     </navigator>
-  </view>-->
-
-<view class="userinfo">
-  <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo">
-    获取头像昵称
-  </button>
-  <block wx:else>
-    <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-    <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-  </block>
-</view>
-<view class=" login">
-  <view>名字</view>
-  <input class="outline" type="text" placeholder="请输入你的名字" auto-focus="{{true}}" bindinput="inputName" />
-  <view>学号</view>
-  <input class="outline" type="number" placeholder="请输入你的学号" auto-focus="{{true}}" bindinput="inputNum" />
-</view>
-<block wx:if="{{!getName||!getNum}}">
-  <button size="mini" plain="true" type="primary" bindtap="open_confirm">登录</button>
+  </view> -->
+    <view class="userinfo">
+      <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo">
+        获取头像昵称
+      </button>
+      <block wx:else>
+        <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+      </block>
+    </view>
+    <view class=" login">
+      <view>名字</view>
+      <input class="outline" type="text" placeholder="请输入你的名字" auto-focus="{{true}}" bindinput="inputName" />
+      <view>学号</view>
+      <input class="outline" type="number" placeholder="请输入你的学号" auto-focus="{{true}}" bindinput="inputNum" />
+    </view>
+    <block wx:if="{{!getName||!getNum}}">
+      <button size="mini" plain="true" type="primary" bindtap="open_confirm">登录</button>
+    </block>
+    <block wx:else>
+      <button size="mini" plain="true" type="primary" bindtap="next" loading="{{loading}}">
+        登录
+      </button>
+    </block>
+  </view>
 </block>
 <block wx:else>
-  <button size="mini" plain="true" type="primary" bindtap="next" loading="{{loading}}">登录</button>
+  <!-- miniprogram/pages/homepage/homepage.wxml -->
+  <block wx:if="{{home}}">
+    <view class="container">
+      <view class="person" style="background-image: url({{user_background}})">
+        <image class="userinfo-avatar" src="{{user_info.avatarUrl}}" />
+        <view style="font-size:20px;padding-top:16px;font-color:white">{{person_name}}</view>
+        <view style="font-size:16px;font-color:white">{{person_num}}</view>
+      </view>
+    </view>
+    <view class="weui-tabbar">
+      <view class="weui-tabbar__item" bindtap="home2map">
+        <view style="position: relative;display:inline-block;">
+          <image src="../images/map.jpg" class="weui-tabbar__icon"></image>
+        </view>
+        <view class="weui-tabbar__label">地图</view>
+      </view>
+      <view class="weui-tabbar__item weui-bar__item_on">
+        <view style="position: relative;display:inline-block;">
+          <image src="../images/home.jpg" class="weui-tabbar__icon"></image>
+          <view class="weui-badge weui-badge_dot" style="position:absolute;top:-2px;left:calc(100% - 3px);"></view>
+        </view>
+        <view class="weui-tabbar__label">主页</view>
+      </view>
+    </view>
+  </block>
+  <block wx:else>
+    <view class="weui-search-bar">
+      <view class="weui-search-bar__form">
+        <view class="weui-search-bar__box">
+          <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
+          <input type="text" class="weui-search-bar__input" placeholder="搜索" value="{{inputVal}}" focus="{{inputShowed}}" bindinput="inputTyping" />
+          <view class="weui-icon-clear" wx:if="{{inputVal.length > 0}}" bindtap="clearInput">
+            <icon type="clear" size="14"></icon>
+          </view>
+        </view>
+        <label class="weui-search-bar__label" hidden="{{inputShowed}}" bindtap="showInput">
+          <icon class="weui-icon-search" type="search" size="14"></icon>
+          <view class="weui-search-bar__text">搜索</view>
+        </label>
+      </view>
+      <view class="weui-search-bar__cancel-btn" hidden="{{!inputShowed}}" bindtap="hideInput">
+        取消
+      </view>
+    </view>
+    <view bindtouchstart="bindSearch" data-keywords="{{item}}"  hidden="{{!inputShowed}}" class="text_box" wx:for="{{tips}}" wx:key="name">
+      <view class="weui-cells searchbar-result" wx:if="{{inputVal.length > 0}}">
+        <view class="weui-cell" hover-class="weui-cell_active">
+          <view class="weui-cell__bd">
+            <view>{{item.name}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <!-- <view class="weui-cells searchbar-result" wx:if="{{inputVal.length > 0}}">
+      <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">
+          <view>实时搜索文本</view>
+        </view>
+      </navigator>
+      <navigator url="" class="weui-cell" hover-class="weui-cell_active" wx:key="{{tips}}" wx:key-item="i">
+        <view class="weui-cell__bd" bindtouchstart="bindSearch" data-keywords="{{i.name}}">
+          <view>{{i.name}}</view>
+        </view>
+      </navigator>
+    </view> -->
+    <view class="container">
+      <!-- map属性
+        longitude 中心经度  
+        latitude  中心纬度  
+        scale:16  缩放级别，取值范围为5-18  
+        markers   Array 标记点   
+        covers    Array 即将移除，请使用 markers  
+        polyline  Array 路线  
+        polygons  Array 多边形
+        circles   Array 圆   
+        controls  Array 控件（即将废弃，建议使用 cover-view 代替）   
+        include-points  Array 缩放视野以包含所有给定的坐标点   
+        show-location   Boolean 显示带有方向的当前定位点  
+        subkey  ''  个性化地图使用的key，仅初始化地图时有效
+        enable-3D:false   展示3D楼块(工具暂不支持） 
+        show-compass:false  显示指南针 
+        enable-overlooking:false  开启俯视 
+        enable-zoom:true  是否支持缩放 
+        enable-scroll:true  是否支持拖动  
+        enable-rotate:false   是否支持旋转  
+        bindmarkertap   点击标记点时触发，会返回marker的id   
+        bindcallouttap  点击标记点对应的气泡时触发，会返回marker的id 
+        bindcontroltap  点击控件时触发，会返回control的id   
+        bindregionchange 视野发生变化时触发  2.3.0起增加causedBy 参数区分拖动、缩放和调用接口等来源
+        bindtap   EventHandle     点击地图时触发   
+        bindupdated   EventHandle     在地图渲染更新完成时触发 
+        bindpoitap  EventHandle     点击地图poi点时触发      style="width: 100%; height: 300px;" -->
+      <view class="contentView" hidden="{{inputShowed}}">
+        <map id="myMap" latitude="{{latitude}}" longitude="{{longitude}}" scale="{{scale}}" markers="{{markers}}" covers="{{covers}}" show-location></map>
+        <!-- <view class="map_text">
+          <text class="h1">{{textData.name}}</text>
+          <text>{{textData.desc}}</text>
+        </view> -->
+        <button bindtap="back_self" type="primary">回位</button>
+        <!-- <button bindtap="translateMarker" type="primary">移动标注</button>
+                    <button bindtap="moveToLocation" type="primary">移动位置</button>
+                    <button bindtap="scaleClick" type="primary">缩放地图</button>
+                    <button bindtap="includePoints" type="primary">缩放视野展示所有经纬度</button> -->
+      </view>
+      <view class="weui-tabbar">
+        <view class="weui-tabbar__item  weui-bar__item_on">
+          <view style="position: relative;display:inline-block;">
+            <image src="../images/map.jpg" class="weui-tabbar__icon"></image>
+          </view>
+          <view class="weui-tabbar__label">地图</view>
+        </view>
+        <view class="weui-tabbar__item" bindtap="map2home">
+          <view style="position: relative;display:inline-block;">
+            <image src="../images/home.jpg" class="weui-tabbar__icon"></image>
+            <view class="weui-badge weui-badge_dot" style="position:absolute;top:-2px;left:calc(100% - 3px);"></view>
+          </view>
+          <view class="weui-tabbar__label">主页</view>
+        </view>
+      </view>
+    </view>
+  </block>
 </block>
-</view>

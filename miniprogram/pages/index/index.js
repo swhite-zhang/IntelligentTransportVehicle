@@ -1,10 +1,14 @@
 //index.js
 const app = getApp();
 
+var amapFile = require("../amap/amap-wx");
+
+var markersData = [];
+
 Page({
   data: {
     avatarUrl: "./user-unlogin.png",
-    userInfo: {},
+    user_info: {},
     logged: false,
     takeSession: false,
     requestResult: "",
@@ -15,12 +19,51 @@ Page({
     openid: "",
     person_name: "",
     person_num: 0,
+    home: true,
+    home: true,
+    latitude: "",
+    longitude: "",
+    scale: 16,
+    location: "获取位置",
+    user_background: "",
+    markers: [
+      {
+        id: 1,
+        latitude: 39.96,
+        longitude: 116.35,
+        title: "校本部"
+      },
+      {
+        id: 2,
+        latitude: 40.15,
+        longitude: 116.28,
+        title: "沙河校区"
+        // callout: {
+        //   content: "自定义点",
+        //   color: "#AD1212",
+        //   bgColor: "#00AD00",
+        //   fontSize: "20",
+        //   borderRadius: "5"
+        // }
+      }
+    ],
+    // search_marker: {
+    //   latitude: 0,
+    //   longitude: 0,
+    //   title: "",
+    //   color: "#0xffa500",
+    //   label: ""
+    // },
+    inputShowed: false,
+    inputVal: "",
+    tips: {}
   },
 
-  onReady: function() {},
+  onReady: function(e) {
+    this.mapCtx = wx.createMapContext("myMap");
+  },
 
   onLoad: function() {
-
     var that = this;
 
     if (!wx.cloud) {
@@ -30,11 +73,11 @@ Page({
       return;
     }
 
-    this.get_openid();
+    that.get_openid();
 
-    var openid = this.data.openid;
+    var openid = that.data.openid;
 
-    console.log(this.data.openid);
+    console.log(that.data.openid);
 
     const db = wx.cloud.database();
 
@@ -47,7 +90,7 @@ Page({
             success: res => {
               this.setData({
                 avatarUrl: res.userInfo.avatarUrl,
-                userInfo: res.userInfo
+                user_info: res.userInfo
               });
             }
           });
@@ -63,19 +106,34 @@ Page({
         success: function(res) {
           that.setData({
             person_name: res.data[0].name,
-            person_num:res.data[0].number,
-            loged:res.data[0].iflogin,
+            person_num: res.data[0].number,
+            logged: res.data[0].iflogin
           });
-          if (res.data[0].iflogin) {
-            
-            wx.navigateTo({
-              url: "../homepage/homepage?openid=" + that.data.openid
-            });
-          }
-            console.log(res.data[0].iflogin);
+          console.log(res.data);
         }
       });
 
+    wx.cloud.downloadFile({
+      fileID:
+        "cloud://chuyan-1-co5tb.6368-chuyan-1-co5tb-1301134763/homepage_user_background.jpg", // 文件 ID
+      success: res => {
+        // 返回临时文件路径
+        console.log(res.tempFilePath);
+        that.setData({
+          user_background: res.tempFilePath
+        });
+      },
+      fail: console.error
+    });
+
+    var myAmapFun = new amapFile.AMapWX({
+      key: "2e4ef5d3b34b3a3167eb9e72ff12e90d"
+    });
+    myAmapFun.getPoiAround({
+      success: function(res) {
+        console.log(res);
+      }
+    });
     // if (app.globalData.userInfo) {
     //   this.setData({
     //     userInfo: app.globalData.userInfo,
@@ -104,12 +162,24 @@ Page({
     // }
   },
 
+  onShow: function() {
+    var that = this;
+    wx.getLocation({
+      success: function(res) {
+        that.setData({
+          latitude: res.latitude,
+          longitude: res.longitude
+        });
+      }
+    });
+  },
+
   onGetUserInfo: function(e) {
     if (!this.data.logged && e.detail.userInfo) {
       this.setData({
         logged: true,
         avatarUrl: e.detail.userInfo.avatarUrl,
-        userInfo: e.detail.userInfo
+        user_info: e.detail.userInfo
       });
     }
   },
@@ -162,9 +232,9 @@ Page({
       }
     });
     this.setData({ loading: true });
-    wx.navigateTo({
-      url: "../homepage/homepage?openid" + this.data.openid
-    });
+    // wx.navigateTo({
+    //   url: "../homepage/homepage?openid" + this.data.openid
+    // });
     this.onLoad();
   },
 
@@ -223,6 +293,142 @@ Page({
           }
         });
       }
+    });
+  },
+
+  home2map: function() {
+    this.setData({
+      home: false
+    });
+  },
+
+  map2home: function() {
+    this.setData({
+      home: true
+    });
+  },
+
+  back_self: function() {
+    wx.getLocation({
+      success: res => {
+        this.setData({
+          latitude: res.latitude,
+          longitude: res.longitude
+        });
+      }
+    });
+  },
+
+  getCenterLocation: function() {
+    var that = this;
+    that.mapCtx.getCenterLocation({
+      success: function(res) {
+        console.log("经度", res.longitude);
+        console.log("纬度", res.latitude);
+        that.setData({
+          location: "经度:" + res.longitude + "纬度:" + res.latitude
+        });
+      }
+    });
+  },
+
+  showInput: function() {
+    this.setData({
+      inputShowed: true
+    });
+  },
+  hideInput: function() {
+    this.setData({
+      inputVal: "",
+      inputShowed: false
+    });
+  },
+  clearInput: function() {
+    this.setData({
+      inputVal: ""
+    });
+  },
+  inputTyping: function(e) {
+    var that = this;
+    that.setData({
+      inputVal: e.detail.value
+    });
+
+    var keywords = e.detail.value;
+    //var key = config.Config.key;
+    var myAmapFun = new amapFile.AMapWX({
+      key: "2e4ef5d3b34b3a3167eb9e72ff12e90d"
+    });
+    myAmapFun.getInputtips({
+      keywords: keywords,
+      location: "",
+      success: function(data) {
+        if (data && data.tips) {
+          that.setData({
+            tips: data.tips
+          });
+          console.log(data.tips);
+        }
+      }
+    });
+  },
+
+  bindSearch: function(e) {
+    var keywords = e.currentTarget.dataset.keywords;
+    console.log(keywords.location);
+    var that = this;
+    var search_marker = {
+      latitude: "",
+      longitude: "",
+      title: "",
+      color: "#0xffa500",
+      label: ""
+    };
+    var i = 0;
+    while (keywords.location[i] != "," && i < 100) {
+      search_marker.longitude += keywords.location[i];
+      i++;
+    }
+    i++;
+    while (i < keywords.location.length) {
+      search_marker.latitude += keywords.location[i];
+      i++;
+    }
+    search_marker.title = keywords.sname;
+    search_marker.label = keywords.name;
+    this.data.markers.push(search_marker);
+    that.setData({
+      inputShowed: false,
+      latitude:search_marker.latitude,
+      longitude:search_marker.longitude
+    });
+    // wx.redirectTo({
+    //   url: url
+    // })
+  },
+
+  showMarkerInfo: function(data, i) {
+    var that = this;
+    that.setData({
+      textData: {
+        name: data[i].name,
+        desc: data[i].address
+      }
+    });
+  },
+  changeMarkerColor: function(data, i) {
+    var that = this;
+    var markers = [];
+    for (var j = 0; j < data.length; j++) {
+      if (j == i) {
+        data[j].iconPath = "选中 marker 图标的相对路径"; //如：..­/..­/img/marker_checked.png
+      } else {
+        data[j].iconPath = "未选中 marker 图标的相对路径"; //如：..­/..­/img/marker.png
+      }
+      markers.push(data[j]);
+    }
+    that.setData({
+      markers: markers
     });
   },
 
