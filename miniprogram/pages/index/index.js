@@ -18,7 +18,6 @@ Page({
     requestResult: "",
     getName: false,
     getNum:false,
-    loading: false,
     openid: "",
     person_name: "",
     person_num: 0,
@@ -237,7 +236,11 @@ Page({
         console.log(res);
       }
     });
-    this.setData({ loading: true });
+    wx.showToast({
+      title: "登录成功",
+      icon: "success",
+      duration: 3000
+    });
     // wx.navigateTo({
     //   url: "../homepage/homepage?openid" + this.data.openid
     // });
@@ -438,5 +441,13 @@ Page({
       markers: markers
     });
   },
+
+  scan: function (){
+    wx.scanCode({
+      success: function (res){
+        console.log(res)
+      }
+    })
+  }
 
 });
