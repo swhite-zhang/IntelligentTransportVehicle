@@ -8,7 +8,7 @@ var markersData = [];
 
 Page({
   data: {
-    welcomeBackground:"",
+    welcomeBackground: "",
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse("button.open-type.getUserInfo"),
@@ -17,11 +17,11 @@ Page({
     takeSession: false,
     requestResult: "",
     getName: false,
-    getNum:false,
+    getNum: false,
     openid: "",
     person_name: "",
     person_num: 0,
-    iflogin:false,
+    iflogin: false,
     home: true,
     latitude: "",
     longitude: "",
@@ -33,22 +33,49 @@ Page({
         id: 1,
         latitude: 39.96,
         longitude: 116.35,
-        title: "校本部"
+        title: "校本部",
+        iconPath: "../images/markers1.png",
+        width: 50,
+        height: 50,
+        callout: {
+          content: "校本部",
+          color: "#1B4F72",
+          bgColor: "#D0D3D4",
+          fontSize: "16",
+          borderRadius: "5",
+          padding: "6",
+          textAlign: "center"
+        }
       },
       {
         id: 2,
         latitude: 40.15,
         longitude: 116.28,
-        title: "沙河校区"
-        // callout: {
-        //   content: "自定义点",
-        //   color: "#AD1212",
-        //   bgColor: "#00AD00",
-        //   fontSize: "20",
-        //   borderRadius: "5"
-        // }
+        title: "沙河校区",
+        iconPath: "../images/markers1.png",
+        width: 50,
+        height: 50,
+        callout: {
+          content: "沙河校区",
+          color: "#1B4F72",
+          bgColor: "#D0D3D4",
+          fontSize: "16",
+          borderRadius: "5",
+          padding: "6",
+          textAlign: "center"
+        }
       }
     ],
+    // controls:[{
+    //   id:1,
+    //   iconpath:'../images/back.jpg',
+    //   position:{
+    //     right:20,
+    //     top:20,
+    //     width:10,
+    //     height:10
+    //   }
+    // }],
     // search_marker: {
     //   latitude: 0,
     //   longitude: 0,
@@ -207,7 +234,6 @@ Page({
     } else {
       this.setData({ getName: false });
     }
-    this.onLoad();
   },
 
   inputNum: function(num) {
@@ -219,7 +245,6 @@ Page({
     } else {
       this.setData({ getNum: false });
     }
-    this.onLoad();
   },
 
   next: function() {
@@ -318,7 +343,7 @@ Page({
   },
 
   back_self: function() {
-    console.log('get location');
+    console.log("get location");
     wx.getLocation({
       success: res => {
         this.setData({
@@ -388,33 +413,54 @@ Page({
     console.log(keywords.location);
     var that = this;
     var search_marker = {
-      latitude: "",
-      longitude: "",
+      id: 3,
+      latitude: 0,
+      longitude: 0,
       title: "",
-      color: "#0xffa500",
-      label: ""
+      iconPath: "../images/markers2.png",
+      width: 50,
+      height: 50,
+      callout: {
+        content: "",
+        color: "#E59866",
+        bgColor: "#FEF5E7",
+        fontSize: "16",
+        borderRadius: "5",
+        padding: "6",
+        textAlign: "center"
+      }
     };
     var i = 0;
+    var latitude = "";
+    var longitude = "";
     while (keywords.location[i] != "," && i < 100) {
-      search_marker.longitude += keywords.location[i];
+      longitude += keywords.location[i];
       i++;
     }
     i++;
     while (i < keywords.location.length) {
-      search_marker.latitude += keywords.location[i];
+      latitude += keywords.location[i];
       i++;
     }
-    search_marker.title = keywords.sname;
-    search_marker.label = keywords.name;
-    this.data.markers.push(search_marker);
+    search_marker.latitude = parseFloat(latitude);
+    search_marker.longitude = parseFloat(longitude);
+    search_marker.title =
+      keywords.district + "\n" + keywords.address + "\n" + keywords.name;
+    search_marker.callout.content =
+      keywords.district + "\n" + keywords.address + "\n" + keywords.name;
+    var markers = that.data.markers;
+    markers.push(search_marker);
     that.setData({
       inputShowed: false,
       latitude: search_marker.latitude,
-      longitude: search_marker.longitude
+      longitude: search_marker.longitude,
+      markers: markers,
+      scale: 18
     });
     // wx.redirectTo({
     //   url: url
     // })
+    that.onLoad();
   },
 
   showMarkerInfo: function(data, i) {
@@ -442,12 +488,11 @@ Page({
     });
   },
 
-  scan: function (){
+  scan: function() {
     wx.scanCode({
-      success: function (res){
-        console.log(res)
+      success: function(res) {
+        console.log(res);
       }
-    })
+    });
   }
-
 });

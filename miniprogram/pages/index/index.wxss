@@ -1,5 +1,23 @@
 /**index.wxss**/
 
+.scancode{
+    position:absolute;
+    top:140rpx;
+    right:85rpx;
+    height: 50rpx;
+    width: 50rpx;
+    opacity: 0.6;
+}
+
+.cover-view{
+    position: absolute;
+    right: 80rpx;
+    top:220rpx;
+    height: 60rpx;
+    width: 60rpx;
+    opacity: 0.6;
+}
+
 .btn{
         width: 80%;
         margin-top: 20rpx;
@@ -10,7 +28,6 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
-    
 }
 
 .btn::after {
@@ -49,9 +66,8 @@
 }
 
 .outline {
-    outline: solid;
-    outline-color: beige;
-    outline-style: inset;
+    outline: 0;
+    outline-style: none;
     outline-width: 1px;
 }
 
@@ -101,10 +117,11 @@ text {
 }
 
 .contentView {
+    position: fixed;
+    height: 100%;
     width: 100%;
     padding: 0;
     bottom: 0;
-    height: 400px;
 }
 
 button {
@@ -113,6 +130,7 @@ button {
 }
 
 map {
+    width: 100%;
     bottom: 0;
     height: 90%;
 }
