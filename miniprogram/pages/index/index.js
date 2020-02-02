@@ -3,7 +3,8 @@
 const app = getApp();
 
 var amapFile = require("../amap/amap-wx");
-
+var qqmap = require("../qqmap/qqmap-wx-jssdk");
+var qqmapsdk;
 var markersData = [];
 
 Page({
@@ -89,6 +90,10 @@ Page({
   },
   //事件处理函数
   onLoad: function() {
+    // 实例化API核心类
+    qqmapsdk = new qqmap({
+      key: "QMKBZ-POKC4-WO2UP-XOXZA-35V5Q-4LBHU"
+    });
     var that = this;
     if (app.globalData.userInfo) {
       this.setData({
@@ -394,23 +399,40 @@ Page({
     var myAmapFun = new amapFile.AMapWX({
       key: "2e4ef5d3b34b3a3167eb9e72ff12e90d"
     });
-    myAmapFun.getInputtips({
-      keywords: keywords,
-      location: "",
-      success: function(data) {
-        if (data && data.tips) {
-          that.setData({
-            tips: data.tips
-          });
-          console.log(data.tips);
+    qqmapsdk.search({
+            keyword: '酒店',
+            success: function (res) {
+                console.log(res);
+                if(res&&res.data){
+                  that.setData({
+                    tips: res.data
+                  })
+                }
+            },
+            fail: function (res) {
+                console.log(res);
+            },
+        complete: function (res) {
+            console.log(res);
         }
-      }
-    });
+      });
+    // myAmapFun.getInputtips({
+    //   keywords: keywords,
+    //   location: "",
+    //   success: function(data) {
+    //     if (data && data.tips) {
+    //       that.setData({
+    //         tips: data.tips
+    //       });
+    //       console.log(data.tips);
+    //     }
+    //   }
+    // });
   },
 
   bindSearch: function(e) {
     var keywords = e.currentTarget.dataset.keywords;
-    console.log(keywords.location);
+    console.log(e);
     var that = this;
     var search_marker = {
       id: 3,
@@ -430,24 +452,12 @@ Page({
         textAlign: "center"
       }
     };
-    var i = 0;
-    var latitude = "";
-    var longitude = "";
-    while (keywords.location[i] != "," && i < 100) {
-      longitude += keywords.location[i];
-      i++;
-    }
-    i++;
-    while (i < keywords.location.length) {
-      latitude += keywords.location[i];
-      i++;
-    }
-    search_marker.latitude = parseFloat(latitude);
-    search_marker.longitude = parseFloat(longitude);
-    search_marker.title =
-      keywords.district + "\n" + keywords.address + "\n" + keywords.name;
+    
+    search_marker.latitude = keywords.location.lat;
+    search_marker.longitude = keywords.location.lng;
+    search_marker.title =keywords.title;
     search_marker.callout.content =
-      keywords.district + "\n" + keywords.address + "\n" + keywords.name;
+      keywords.category + "\n" + keywords.address + "\n" + keywords.title;
     var markers = that.data.markers;
     markers.push(search_marker);
     that.setData({
