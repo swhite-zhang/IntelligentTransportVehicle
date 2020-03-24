@@ -1,39 +1,76 @@
 <!-- index.wxml -->
-<block wx:if="{{!hasUserInfo}}">
+<block wx:if="{{!ifGetStart}}">
     <view class="welcome" style="background-image: url({{welcomeBackground}})">
-        <view class="welcome_text">点击以下按钮以继续</view>
-        <button class="btn" open-type="getUserInfo" bindgetuserinfo="getUserInfo" hover-class="btn_hover">
-            获取头像昵称
+        <view class="function">
+            <view class="welcome_text">此小程序仅限北京邮电大学雏雁项目体验。目前拥有的功能：</view>
+            <view class="welcome_text">1.定位</view>
+            <view class="welcome_text">2.查询周边信息</view>
+            <view class="welcome_text">3.扫码（扫码功能暂不齐全，会在后期补上）</view>
+        </view>
+        <view style="text-align: center;color: rgb(224, 224, 224)">提醒：仅限北京邮电大学同学中想要体验的人使用</view>
+        <view style="text-align: center;color: rgb(224, 224, 224)">如果你想要体验此功能请点击以下按钮继续</view>
+        <button class="btn" open-type="getUserInfo" bindtap="getStart" hover-class="btn_hover">
+            开始使用
         </button>
     </view>
 </block>
 <block wx:else>
-    <block wx:if="{{!iflogin}}">
+    <block wx:if="{{!hasUserInfo}}">
         <view class="container">
-            <view class=" login">
-                <view>名字</view>
-                <input class="outline" type="text" placeholder="请输入你的名字" auto-focus="{{true}}" bindinput="inputName" />
-                <view>学号</view>
-                <input class="outline" type="number" placeholder="请输入你的学号" auto-focus="{{true}}" bindinput="inputNum" />
+            <view class="weui-flex">
+                <view class="weui-flex__item">
+                    <view class="remind">再次提示：仅限体验用户使用</view>
+                </view>
             </view>
-            <block wx:if="{{!getName||!getNum}}">
-                <button size="mini" plain="true" type="primary" bindtap="open_confirm">登录</button>
-            </block>
-            <block wx:else>
-                <button size="mini" plain="true" type="primary" bindtap="next">登录</button>
-            </block>
+            <view class="divLine"></view>
+            <view class="weui-flex">
+                <view class="weui-flex__item">
+                    <view class="remind_content">
+                        为了保证您的用户体验，我们需要得到您的用户信息包括头像、昵称和位置信息。我们承诺仅用于小程序内的登录、账号信息显示和位置功能的使用。如果您愿意当我们的体验用户，请点击以下同意按钮。
+                    </view>
+                </view>
+            </view>
+            <view class="divLine"></view>
+            <view class="weui-flex">
+                <button class="btn" style="background-color:(20,76,146))" open-type="getUserInfo" bindgetuserinfo="getUserInfo" hover-class="btn_hover">
+                    同意
+                </button>
+            </view>
         </view>
     </block>
     <block wx:else>
+        <!-- <block wx:if="{{!iflogin}}">
+            <view class="container">
+                <view class="remind_content" style="color:(0,0,0)">
+                    我们需要您注册一个账号以存储信息
+                </view>
+                <view class="divLine"></view>
+                <view class="login">
+                    <view>昵称</view>
+                    <input class="outline" type="text" placeholder="请输入你的名字" auto-focus="{{true}}" bindinput="inputName" />
+                    <view>密码</view>
+                    <input class="outline" type="number" placeholder="请输入你的学号" auto-focus="{{true}}" bindinput="inputNum" />
+                </view>
+                <block wx:if="{{!getName||!getNum}}">
+                    <button size="mini" plain="true" type="primary" bindtap="open_confirm">
+                        登录
+                    </button>
+                </block>
+                <block wx:else>
+                    <button size="mini" plain="true" type="primary" bindtap="next">登录</button>
+                </block>
+            </view>
+        </block> -->
+        <!-- <block wx:else> -->
         <!-- miniprogram/pages/homepage/homepage.wxml -->
         <block wx:if="{{home}}">
             <view class="container">
                 <view class="person" style="background-image: url({{user_background}})">
                     <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" />
                     <view style="font-size:20px;padding-top:16px;font-color:white">
-                        {{person_name}}
+                        {{userInfo.nickName}}
                     </view>
-                    <view style="font-size:16px;font-color:white">{{person_num}}</view>
+                    <!-- <view style="font-size:16px;font-color:white">{{person_num}}</view> -->
                 </view>
             </view>
             <view class="weui-tabbar">
@@ -157,6 +194,7 @@
             </view>
         </block>
     </block>
+    <!-- </block> -->
 </block>
 <!-- 用户 openid -->
 <!-- <view class="userinfo">

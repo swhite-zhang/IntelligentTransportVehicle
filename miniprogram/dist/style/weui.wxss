@@ -969,7 +969,8 @@ button.weui-vcode-btn {
 .weui-flex {
     display: -webkit-box;
     display: -webkit-flex;
-    display: flex
+    display: flex;
+    padding: 20px;
 }
 
 .weui-flex__item {

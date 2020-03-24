@@ -5,10 +5,10 @@ const app = getApp();
 var amapFile = require("../amap/amap-wx");
 var qqmap = require("../qqmap/qqmap-wx-jssdk");
 var qqmapsdk;
-var markersData = [];
 
 Page({
   data: {
+    ifGetStart:false,
     welcomeBackground: "",
     userInfo: {},
     hasUserInfo: false,
@@ -17,12 +17,12 @@ Page({
     logged: false,
     takeSession: false,
     requestResult: "",
-    getName: false,
-    getNum: false,
-    openid: "",
-    person_name: "",
-    person_num: 0,
-    iflogin: false,
+    // getName: false,
+    // getNum: false,
+    // openid: "",
+    // person_name: "",
+    // person_num: 0,
+    // iflogin: false,
     home: true,
     latitude: "",
     longitude: "",
@@ -88,6 +88,11 @@ Page({
     inputVal: "",
     tips: {}
   },
+  getStart: function(){
+    this.setData({
+      ifGetStart: true
+    })
+  },
   //事件处理函数
   onLoad: function() {
     // 实例化API核心类
@@ -101,6 +106,7 @@ Page({
         hasUserInfo: true
       });
       console.log("getUserInfo");
+      console.log(app.globalData.userInfo);
     } else if (that.data.canIUse) {
       // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
       // 所以此处加入 callback 以防止这种情况
@@ -109,20 +115,33 @@ Page({
           userInfo: res.userInfo,
           hasUserInfo: true
         });
+      console.log(res.userInfo);
       };
       console.log("getUserInfo");
-    } else {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      wx.getUserInfo({
-        success: res => {
-          app.globalData.userInfo = res.userInfo;
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          });
-        }
-      });
-      console.log("getUserInfo");
+    // } else {
+    //   // 在没有 open-type=getUserInfo 版本的兼容处理
+    //   wx.getUserInfo({
+    //     success: res => {
+    //       app.globalData.userInfo = res.userInfo;
+    //       this.setData({
+    //         userInfo: res.userInfo,
+    //         hasUserInfo: true
+    //       });
+    //     },
+    //     fail: err => {
+    //       wx.showModal({
+    //         title: "警告",
+    //         content:
+    //           "您点击了拒绝授权，将无法正常使用小程序的功能体验。请10分钟后再次点击授权，或者删除小程序重新进入。",
+    //         success: function(res) {
+    //           if (res.confirm) {
+    //             console.log("用户点击确定");
+    //           }
+    //         }
+    //       });
+    //     }
+    //   });
+    //   console.log("getUserInfo");
     }
 
     if (!wx.cloud) {
@@ -134,7 +153,6 @@ Page({
 
     that.get_openid();
 
-    var openid = that.data.openid;
 
     console.log(that.data.openid);
 
@@ -147,9 +165,10 @@ Page({
       .get({
         success: function(res) {
           that.setData({
-            person_name: res.data[0].name,
-            person_num: res.data[0].number,
-            iflogin: res.data[0].iflogin
+            // person_name: res.data[0].name,
+            // person_num: res.data[0].number,
+            iflogin: res.data[0].iflogin,
+            ifGetStart: res.data[0].ifGetStart,
           });
           console.log(res.data);
         }
@@ -190,28 +209,60 @@ Page({
     });
   },
 
-  getUserInfo: function(e) {
-    console.log(e);
-    app.globalData.userInfo = e.detail.userInfo;
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
-    });
-  },
   onShow: function() {
-    var that = this;
-    wx.getLocation({
-      success: function(res) {
-        that.setData({
-          latitude: res.latitude,
-          longitude: res.longitude
-        });
-      }
-    });
+    
+    // wx.getLocation({
+    //   success: res => {
+    //     that.setData({
+    //       latitude: res.latitude,
+    //       longitude: res.longitude
+    //     });
+    //   },
+    //   fail: err => {
+    //     wx.showModal({
+    //       title: "警告",
+    //       content:
+    //         "您禁用了位置信息，是否打开？（禁用位置权限将会影响小程序的使用）",
+    //       success: function(res) {
+    //         if (res.confirm) {
+    //           wx.openSetting({
+    //             success: res => {
+    //               var status = res.authSetting;
+    //               status["scope.userLocation"] = true;
+    //               wx.showToast({
+    //                 title: "授权成功",
+    //                 icon: "success"
+    //               });
+    //               console.log(status["scope.userLocation"]);
+    //               wx.getLocation({
+    //                 success: res => {
+    //                   that.setData({
+    //                     latitude: res.latitude,
+    //                     longitude: res.longitude
+    //                   });
+    //                   console.log(this.latitude, this.longtitude);
+    //                 },
+    //                 fail: err => {
+    //                   console.log("failed to get location");
+    //                 }
+    //               });
+    //             }
+    //           });
+    //         } else if (res.cancel) {
+    //           wx.showToast({
+    //             title: "授权失败",
+    //             icon: 'none'
+    //           });
+    //         }
+    //       }
+    //     });
+    //   }
+    // });
   },
 
+
   getUserInfo: function(e) {
-    console.log(e);
+    console.log(e.detail.userInfo);
     app.globalData.userInfo = e.detail.userInfo;
     this.setData({
       logged: true,
@@ -219,40 +270,6 @@ Page({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     });
-  },
-  //函数得到用户信息
-  // getUserInfo: function(e) {
-  //   console.log(e);
-  //   app.globalData.userInfo = e.detail.userInfo;
-  //   this.setData({
-  //     userInfo: e.detail.userInfo,
-  //     hasUserInfo: true
-  //   });
-  // },
-
-  inputName: function(name) {
-    this.setData({
-      person_name: name.detail.value
-    });
-    if (this.data.person_name) {
-      this.setData({ getName: true });
-    } else {
-      this.setData({ getName: false });
-    }
-  },
-
-  inputNum: function(num) {
-    this.setData({
-      person_num: num.detail.value
-    });
-    if (this.data.person_num) {
-      this.setData({ getNum: true });
-    } else {
-      this.setData({ getNum: false });
-    }
-  },
-
-  next: function() {
     const db = wx.cloud.database();
     db.collection("user_info").add({
       data: {
@@ -260,51 +277,93 @@ Page({
         description: "name and number",
         name: this.data.person_name,
         number: this.data.person_num,
-        iflogin: true
+        iflogin: true,
+        ifGetStart:true,
       },
       success: function(res) {
         console.log(res);
       }
     });
-    wx.showToast({
-      title: "登录成功",
-      icon: "success",
-      duration: 3000
-    });
-    // wx.navigateTo({
-    //   url: "../homepage/homepage?openid" + this.data.openid
-    // });
-    this.onLoad();
   },
+  
+  //注册
 
-  open_confirm: function() {
-    if (!this.data.getName || !this.data.getNum) {
-      var cont = "";
-      if (this.data.getName) {
-        cont = "请输入学号";
-      } else if (this.data.getNum) {
-        cont = "请输入姓名";
-      } else {
-        cont = "请输入姓名和学号";
-      }
-      wx.showModal({
-        title: "提示",
-        content: cont,
-        //confirmText: "主操作",
-        //cancelText: "辅助操作",
-        showCancel: false,
-        success: function(res) {
-          console.log(res);
-          if (res.confirm) {
-            console.log("用户点击主操作");
-          } else {
-            console.log("用户点击辅助操作");
-          }
-        }
-      });
-    }
-    this.onLoad();
-  },
+  // inputName: function(name) {
+  //   this.setData({
+  //     person_name: name.detail.value
+  //   });
+  //   if (this.data.person_name) {
+  //     this.setData({ getName: true });
+  //   } else {
+  //     this.setData({ getName: false });
+  //   }
+  // },
+
+  // inputNum: function(num) {
+  //   this.setData({
+  //     person_num: num.detail.value
+  //   });
+  //   if (this.data.person_num) {
+  //     this.setData({ getNum: true });
+  //   } else {
+  //     this.setData({ getNum: false });
+  //   }
+  // },
+
+  // next: function() {
+  //   const db = wx.cloud.database();
+  //   db.collection("user_info").add({
+  //     data: {
+  //       _id: this.data.openid,
+  //       description: "name and number",
+  //       name: this.data.person_name,
+  //       number: this.data.person_num,
+  //       iflogin: true,
+  //       ifGetStart:true,
+  //     },
+  //     success: function(res) {
+  //       console.log(res);
+  //     }
+  //   });
+  //   wx.showToast({
+  //     title: "登录成功",
+  //     icon: "success",
+  //     duration: 3000
+  //   });
+  //   // wx.navigateTo({
+  //   //   url: "../homepage/homepage?openid" + this.data.openid
+  //   // });
+  //   this.onLoad();
+  // },
+
+  // open_confirm: function() {
+  //   if (!this.data.getName || !this.data.getNum) {
+  //     var cont = "";
+  //     if (this.data.getName) {
+  //       cont = "请输入学号";
+  //     } else if (this.data.getNum) {
+  //       cont = "请输入姓名";
+  //     } else {
+  //       cont = "请输入姓名和学号";
+  //     }
+  //     wx.showModal({
+  //       title: "提示",
+  //       content: cont,
+  //       //confirmText: "主操作",
+  //       //cancelText: "辅助操作",
+  //       showCancel: false,
+  //       success: function(res) {
+  //         console.log(res);
+  //         if (res.confirm) {
+  //           console.log("用户点击主操作");
+  //         } else {
+  //           console.log("用户点击辅助操作");
+  //         }
+  //       }
+  //     });
+  //   }
+  //   this.onLoad();
+  // },
 
   get_openid: function() {
     let that = this; //获取openid不需要授权
@@ -336,8 +395,56 @@ Page({
   },
 
   home2map: function() {
+    var that = this;
     this.setData({
       home: false
+    });
+    wx.getLocation({
+      success: res => {
+        that.setData({
+          latitude: res.latitude,
+          longitude: res.longitude
+        });
+      },
+      fail: () => {
+        wx.showModal({
+          title: "警告",
+          content:
+            "您禁用了位置信息，是否打开？（禁用位置权限将会影响小程序的使用）",
+          success: function(res) {
+            if (res.confirm) {
+              wx.openSetting({
+                success: res => {
+                  var status = res.authSetting;
+                  status["scope.userLocation"] = true;
+                  wx.showToast({
+                    title: "授权成功",
+                    icon: "success"
+                  });
+                  console.log(status["scope.userLocation"]);
+                  wx.getLocation({
+                    success: res => {
+                      that.setData({
+                        latitude: res.latitude,
+                        longitude: res.longitude
+                      });
+                      console.log(this.latitude, this.longtitude);
+                    },
+                    fail: () => {
+                      console.log("failed to get location");
+                    }
+                  });
+                }
+              });
+            } else if (res.cancel) {
+              wx.showToast({
+                title: "授权失败，您将不能获得相关服务",
+                icon: "none"
+              });
+            }
+          }
+        });
+      }
     });
   },
 
@@ -348,12 +455,54 @@ Page({
   },
 
   back_self: function() {
+    var that=this;
     console.log("get location");
     wx.getLocation({
       success: res => {
-        this.setData({
+        that.setData({
           latitude: res.latitude,
           longitude: res.longitude
+        });
+      },
+      fail: () => {
+        wx.showModal({
+          title: "警告",
+          content:
+            "您禁用了位置信息，是否打开？（禁用位置权限将会影响小程序的使用）",
+          success: function(res) {
+            if(res.confirm){
+              wx.openSetting({
+              success: res => {
+                var status = res.authSetting;
+                status["scope.userLocation"] = true;
+                wx.showToast({
+                  title: "授权成功",
+                  icon: "success"
+                });
+                console.log(status["scope.userLocation"]);
+                wx.getLocation({
+                  success: res => {
+                    that.setData({
+                      latitude: res.latitude,
+                      longitude: res.longitude
+                    });
+                    console.log(this.latitude, this.longtitude)
+                  },
+                  fail: () => {
+                    console.log('failed to get location')
+                  }
+                });
+              }
+            });
+            }
+            else if (res.cancel) {
+              wx.showToast({
+                title: '授权失败，您将不能获得相关服务',
+                icon:'none'
+              })
+            }
+          }
+          
         });
       }
     });
@@ -390,32 +539,28 @@ Page({
   },
   inputTyping: function(e) {
     var that = this;
+    console.log(e.detail.value);
     that.setData({
       inputVal: e.detail.value
     });
-
-    var keywords = e.detail.value;
-    //var key = config.Config.key;
-    var myAmapFun = new amapFile.AMapWX({
-      key: "2e4ef5d3b34b3a3167eb9e72ff12e90d"
-    });
+    console.log(that.inputVal);
     qqmapsdk.search({
-            keyword: '酒店',
-            success: function (res) {
-                console.log(res);
-                if(res&&res.data){
-                  that.setData({
-                    tips: res.data
-                  })
-                }
-            },
-            fail: function (res) {
-                console.log(res);
-            },
-        complete: function (res) {
-            console.log(res);
+      keyword: e.detail.value,
+      success: function(res) {
+        console.log(res);
+        if (res && res.data) {
+          that.setData({
+            tips: res.data
+          });
         }
-      });
+      },
+      fail: function(res) {
+        console.log(res);
+      },
+      complete: function(res) {
+        console.log(res);
+      }
+    });
     // myAmapFun.getInputtips({
     //   keywords: keywords,
     //   location: "",
@@ -452,10 +597,10 @@ Page({
         textAlign: "center"
       }
     };
-    
+
     search_marker.latitude = keywords.location.lat;
     search_marker.longitude = keywords.location.lng;
-    search_marker.title =keywords.title;
+    search_marker.title = keywords.title;
     search_marker.callout.content =
       keywords.category + "\n" + keywords.address + "\n" + keywords.title;
     var markers = that.data.markers;
